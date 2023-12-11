@@ -1,0 +1,266 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Conversion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            justify-content: center;
+            align-items: center;
+            background-image: url(img1.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        } 
+        .container {
+            max-width: 300px;
+            height: 51%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 20px;
+            position: relative;
+        }
+        .container h1 {
+            position: absolute;
+            top: 0;
+            transform: translateY(-50%);
+            text-align: center;
+            font-size: 35px;
+            left: 78vh;  
+        }
+        .clear-all-container {
+            text-align: center;
+            position: absolute;
+            margin-top: 50vh;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #570fc4;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: right;
+        }
+        input::placeholder {
+            text-align: left;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: black;
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: lightblue;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        li {
+            list-style-type: none;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 25% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 20%;
+            text-align: center;
+        }
+        .modal button {
+            margin-top: 10px;
+        }     
+    </style> 
+</head>
+<body>  
+    <div class="container">
+        <h1>Conversion</h1>
+        <div class="input-group">
+            <label for="celsiusInput">Celsius:</label>
+            <input type="text" id="celsiusInput" placeholder="Enter temperature in Celsius"><br><br>
+            <button onclick="celsiusToFahrenheit()">Convert</button><br><br>
+            <button id="clearer1">Clear</button>
+            <div id="celsiusToFahrenheitResult" class="result"></div>
+            <label for="fahrenheitOutput">Fahrenheit:</label>
+            <input type="text" id="fahrenheitOutput" placeholder="Temperature in Fahrenheit" readonly>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="input-group">
+            <label for="fahrenheitInput">Fahrenheit:</label>
+            <input type="text" id="fahrenheitInput" placeholder="Enter temperature in Fahrenheit"><br><br>
+            <button onclick="fahrenheitToCelsius()">Convert</button><br><br>
+            <button id="clearer2">Clear</button>
+            <div id="fahrenheitToCelsiusResult" class="result"></div>
+            <label for="celsiusOutput">Celsius:</label>
+            <input type="text" id="celsiusOutput" placeholder="Temperature in Celsius" readonly>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="input-group">
+            <label for="meterInput">Meters:</label>
+            <input type="text" id="meterInput" placeholder="Enter Amount of Meters"><br><br>
+            <button onclick="metersToFeet()">Convert</button><br><br>
+            <button id="clearer3">Clear</button>
+            <div id="meterToFeetResult" class="result"></div>
+            <label for="feetOutput">Feet:</label>
+            <input type="text" id="feetOutput" placeholder="Converted Feet" readonly>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="input-group">
+            <label for="feetInput">Feet:</label>
+            <input type="text" id="feetInput" placeholder="Enter Amount of Feet"><br><br>
+            <button onclick="feetToMeters()">Convert</button><br><br>
+            <button id="clearer4">Clear</button>
+            <div id="feetToMetersResult" class="result"></div>
+            <label for="meterOutput">Meters:</label>
+            <input type="text" id="meterOutput" placeholder="Converted meters" readonly>
+        </div>
+    </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure you want to clear this input?</p>
+            <button id="confirmClear">Yes</button>
+            <button id="cancelClear">No</button>
+        </div>
+    </div>
+    <div class="clear-all-container">
+        <h2></h2>
+        <button onclick="clearAll()">Clear All</button>
+        </div>
+    <li><a href="index.html" style="position:absolute; right:5px; bottom:5px; z-index: 1000;">Back to Home Page</a></li>
+    <script>
+         function celsiusToFahrenheit() {
+            var celsius = document.getElementById("celsiusInput").value;
+            var fahrenheit = (celsius * 9 / 5) + 32;
+            document.getElementById("fahrenheitOutput").value = fahrenheit;
+        }
+        function fahrenheitToCelsius() {
+            var fahrenheit = document.getElementById("fahrenheitInput").value;
+            var celsius = (fahrenheit - 32) * 5 / 9;
+            document.getElementById("celsiusOutput").value = celsius;
+        }
+        function metersToFeet() {
+            var meters = document.getElementById("meterInput").value;
+            var feet = meters * 3.281;
+            document.getElementById("feetOutput").value = feet;
+        }
+        function feetToMeters() {
+            var feet = document.getElementById("feetInput").value;
+            var meters = feet / 3.281;
+            document.getElementById("meterOutput").value = meters;
+        }
+        function clearbutton(targetInputId, targetResultId) {
+            var modal = document.getElementById('myModal');
+            modal.style.display = "block";
+            var confirmButton = document.getElementById('confirmClear');
+            var cancelButton = document.getElementById('cancelClear');
+            confirmButton.onclick = function () {
+                var input = document.getElementById(targetInputId);
+                var output = document.getElementById(targetResultId);
+                input.value = "";
+                output.value = "";
+                modal.style.display = "none";
+            }
+            cancelButton.onclick = function () {
+                modal.style.display = "none";
+            }
+        }
+        document.getElementById("clearer1").addEventListener("click", function () {
+            clearbutton("celsiusInput", "fahrenheitOutput");
+        });
+        document.getElementById("clearer2").addEventListener("click", function () {
+            clearbutton("fahrenheitInput", "celsiusOutput");
+        });
+        document.getElementById("clearer3").addEventListener("click", function () {
+            clearbutton("meterInput", "feetOutput");
+        });
+        document.getElementById("clearer4").addEventListener("click", function () {
+            clearbutton("feetInput", "meterOutput");
+        });
+        
+        function clearAll() {
+            var modal = document.getElementById('myModal');
+                if (modal) {
+                    modal.style.display = "block";
+
+                var confirmButton = document.getElementById('confirmClear');
+                var cancelButton = document.getElementById('cancelClear');
+
+                confirmButton.onclick = function () {
+                    clearInputOutput("celsiusInput", "fahrenheitOutput");
+                    clearInputOutput("fahrenheitInput", "celsiusOutput");
+                    clearInputOutput("meterInput", "feetOutput");
+                    clearInputOutput("feetInput", "meterOutput");
+                    closeDialogModal();
+                };
+
+                cancelButton.onclick = function () {
+                    closeDialogModal();
+                };
+            }
+        }
+
+        function clearInputOutput(inputId, outputId) {
+            document.getElementById(inputId).value = "";
+            document.getElementById(outputId).value = "";
+        }
+
+        function closeDialogModal() {
+            var modal = document.getElementById('myModal');
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var clearAllButton = document.getElementById('clearAllButton');
+            if (clearAllButton) {
+                clearAllButton.addEventListener('click', function () {
+                    clearAll();
+                });
+            }
+        });
+
+
+    </script>
+   </body>
+</html>

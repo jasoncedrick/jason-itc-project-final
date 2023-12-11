@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url(img1.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: calc(100% - 12px);
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      text-align: center;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button[type="submit"] {
+    display: block;
+    margin: 0 auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th,
+    table td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: right;
+    }
+    .deleteContainer {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .deleteButton {
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer; 
+    }
+    .deleteButton:hover {
+      background-color: #c82333;
+    }
+    .dialog {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; 
+    }
+    .dialog-content {
+      background-color: rgb(255, 255, 255);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 15%;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .dialog-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .dialog-buttons button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .dialog-buttons button:hover {
+      background-color: #0056b3;
+    }
+    li {
+      list-style-type: none;
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Payroll List</h1>
+  <div class="container">
+    <form id="payrollForm">
+      <label for="employeeName">Employee Name:</label>
+      <input type="text" id="employeeName" required>
+      <br>
+    
+      <label for="daysWorked">Days Worked:</label>
+      <input type="number" id="daysWorked" required>
+      <br>
+    
+      <label for="dailyRate">Daily Rate:</label>
+      <input type="number" id="dailyRate" required>
+      <br>
+    
+      <label for="deductionAmount">Deduction Amount:</label>
+      <input type="number" id="deductionAmount" required>
+      <br><br>
+    
+      <button type="submit">Add Employee</button>
+    </form>
+  </div>
+  <table id="payrollTable">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Employee Name</th>
+        <th>Days Worked</th>
+        <th>Daily Rate</th>
+        <th>Gross Pay</th>
+        <th>Deduction Amount</th>
+        <th>Net Pay</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="deleteContainer">
+    <button class="deleteButton" onclick="deleteEmployees()">Clear</button>
+    <button class="deleteButton" onclick="confirmClearAll()">Clear All</button>
+  </div>
+    <div id="deleteAllDialog" class="dialog">
+      <div class="dialog-content">
+        <p>Are you sure you want to delete?</p>
+        <div class="dialog-buttons">
+         <button id="confirmDeleteAll">Yes</button>
+          <button id="cancelDeleteAll">No</button>
+        </div>
+    </div>
+  </div>
+  <div id="deleteDialog" class="dialog">
+    <div class="dialog-content">
+      <p>Enter the Line Number to delete:</p>
+      <input type="number" id="deleteLineNumber" min="1">
+      <div class="dialog-buttons">
+        <button id="confirmDelete">Delete</button>
+        <button id="cancelDelete">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <li><a href="index.html" style="position:absolute; right:5px; bottom:5px;">Back to Home Page</a></li>
+  <script>
+    const payrollForm = document.getElementById('payrollForm');
+    const payrollTable = document.getElementById('payrollTable');
+    const payrollRows = payrollTable.getElementsByTagName('tbody')[0];
+    const deleteDialog = document.getElementById('deleteDialog');
+    const confirmDeleteButton = document.getElementById('confirmDelete');
+    const cancelDeleteButton = document.getElementById('cancelDelete');
+    const deleteLineNumberInput = document.getElementById('deleteLineNumber');
+    let lineNumber = 1;
+
+    payrollForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const employeeNameInput = document.getElementById('employeeName');
+      const daysWorkedInput = document.getElementById('daysWorked');
+      const dailyRateInput = document.getElementById('dailyRate');
+      const deductionAmountInput = document.getElementById('deductionAmount');
+
+      const employeeName = employeeNameInput.value.trim();
+      const daysWorked = parseInt(daysWorkedInput.value);
+      const dailyRate = parseInt(dailyRateInput.value);
+      const deductionAmount = parseInt(deductionAmountInput.value);
+
+      if (!employeeName || !daysWorked || !dailyRate || !deductionAmount) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      const grossPay = daysWorked * dailyRate;
+      const netPay = grossPay - deductionAmount;
+
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${lineNumber}</td>
+        <td>${employeeName}</td>
+        <td>${daysWorked}</td>
+        <td>${dailyRate}</td>
+        <td>${grossPay}</td>
+        <td>${deductionAmount}</td>
+        <td>${netPay}</td>
+      `;
+
+      payrollRows.appendChild(newRow);
+
+      lineNumber++;
+      employeeNameInput.value = '';
+      daysWorkedInput.value = '';
+      dailyRateInput.value = '';
+      deductionAmountInput.value = '';
+    });
+
+    function deleteEmployees() {
+      showDialog();
+    }
+
+    confirmDeleteButton.addEventListener('click', function () {
+      const deleteLineNumber = parseInt(deleteLineNumberInput.value);
+      if (deleteLineNumber && deleteLineNumber >= 1) {
+        deleteRow(deleteLineNumber);
+        hideDialog();
+      } else {
+        alert('Please enter a valid line number.');
+      }
+    });
+
+    cancelDeleteButton.addEventListener('click', function () {
+      hideDialog();
+    });
+
+    function showDialog() {
+      deleteDialog.style.display = 'block';
+    }
+
+    function hideDialog() {
+      deleteDialog.style.display = 'none';
+    }
+
+    function deleteRow(index) {
+      const rows = payrollRows.getElementsByTagName('tr');
+      if (index <= rows.length) {
+        payrollRows.removeChild(rows[index - 1]);
+        updateLineNumbers();
+      }
+    }
+
+    function updateLineNumbers() {
+      const rows = payrollRows.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const lineNumCell = row.getElementsByTagName('td')[0];
+        lineNumCell.textContent = (i + 1).toString();
+      }
+    }
+    const deleteAllDialog = document.getElementById('deleteAllDialog');
+const confirmDeleteAllButton = document.getElementById('confirmDeleteAll');
+const cancelDeleteAllButton = document.getElementById('cancelDeleteAll');
+
+function confirmClearAll() {
+  showDeleteAllDialog();
+}
+
+function showDeleteAllDialog() {
+  deleteAllDialog.style.display = 'block';
+  confirmDeleteAllButton.addEventListener('click', clearAllPayroll);
+  cancelDeleteAllButton.addEventListener('click', hideDeleteAllDialog);
+}
+
+function hideDeleteAllDialog() {
+  deleteAllDialog.style.display = 'none';
+  confirmDeleteAllButton.removeEventListener('click', clearAllPayroll);
+  cancelDeleteAllButton.removeEventListener('click', hideDeleteAllDialog);
+}
+
+function clearAllPayroll() {
+  payrollRows.innerHTML = '';
+  lineNumber = 1;
+  hideDeleteAllDialog();
+
+  
+  document.getElementById('employeeName').value = '';
+  document.getElementById('daysWorked').value = '';
+  document.getElementById('dailyRate').value = '';
+  document.getElementById('deductionAmount').value = '';
+}
+  </script>
+</body>
+</html>

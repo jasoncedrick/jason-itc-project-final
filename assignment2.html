@@ -1,0 +1,154 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Income Tax Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-image: url(img1.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        } 
+        .container {
+            max-width: 300px;
+            height: 51%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 5px;
+        }   
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }  
+        .input-group {
+            margin-bottom: 20px;
+        } 
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }  
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #570fc4;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: right;
+        }
+        input::placeholder {
+            text-align: left;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: black;
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }  
+        button:hover {
+            background-color: lightblue;
+        } 
+        .result {
+             margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        li {
+            list-style-type: none;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 25% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 20%;
+            text-align: center;
+        }
+        .modal button {
+            margin-top: 10px;
+        }     
+    </style>       
+</head>
+<li><a href="index.html" style="position:absolute; right:5px; bottom:5px; z-index: 1000;">Back to Home Page</a></li>
+<body>
+    <div class="container">
+        <h1>Income Tax Calculator</h1>
+        <div class="input-group">
+            <label for="Income">Income:</label>
+            <input type="number" id="Income" placeholder="Enter Annual Income"><br><br>
+            <label for="Tax">Tax:</label>
+            <input type="number" id="Tax" placeholder="Enter Tax Rate"><br>
+        </div>
+            <button onclick="incomecalculator()">Convert</button><br>
+            <button onclick="clearbutton()">Clear</button>
+            <div class="result" id="result"></div>
+        </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure you want to clear this input?</p>
+            <button id="confirmClear">Yes</button>
+            <button id="cancelClear">No</button>
+        </div>
+    
+</body>
+<script>
+    function incomecalculator() {
+            var income = document.getElementById('Income').value;
+            var taxRate = document.getElementById('Tax').value;
+            var tax = (income * taxRate) / 100;  
+            document.getElementById('result').innerHTML = 'Tax to be paid: $' + tax.toFixed(2);
+        }
+        function clearbutton() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = "block";
+        
+        var confirmButton = document.getElementById('confirmClear');
+        var cancelButton = document.getElementById('cancelClear');
+        
+        confirmButton.onclick = function () {
+            var input = document.getElementById('Income');
+            var output = document.getElementById('Tax');
+            
+            input.value = "";
+            output.value = "";
+            document.getElementById('result').innerHTML = "";
+            modal.style.display = "none";
+        };
+        
+        cancelButton.onclick = function () {
+            modal.style.display = "none";
+        };
+    }      
+</script>
+</html>
